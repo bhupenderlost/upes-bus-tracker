@@ -16,7 +16,10 @@
   "main": "app.js",
   "scripts": {
     "test": "nodemon app.js",
-    "start": "node app.js"
+    "start": "node app.js",
+    "admin": "node admin.js",
+    "client": "node client.js"
+
   },
   "author": "Bhupender Singh",
   "license": "ISC",
