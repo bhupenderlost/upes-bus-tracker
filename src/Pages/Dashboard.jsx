@@ -28,50 +28,44 @@ const Dashboard = () => {
             .catch(err => setStdErr(true))
     }, [])
 
-    return(
-        <Base>
-            <h2 className="text-4xl font-bold ml-5">
-                {getAuthToken().user.firstName}, Welcome To Your Dashboard!
+    return (
+      <Base>
+        <h2 className="text-4xl font-bold ml-5">
+          {getAuthToken().user.firstName}, Welcome To Your Dashboard!
+        </h2>
+        <div className="flex flex-col md:flex-row md:flex-wrap justify-center md:justify-start md:gap-8 md:mt-10">
+          <Card style="h-[550px] w-[100%] md:w-[calc(50% - 4rem)] items-center p-2 mb-8 md:mb-0">
+            <h2 className="text-3xl font-bold ml-2 mt-2 mb-10">
+              Last Locations Of Buses
             </h2>
-            <div className="flex flex-row flex-wrap justify-start gap-16 mt-10">
-                <Card style="h-[550px] w-[500px] items-center p-2">
-                    <h2 className="text-3xl font-bold ml-2 mt-2 mb-10">
-                       Last Locations Of Buses
-                    </h2>
-                    { bus ? <LocationItem data={bus} /> : <Loader />}
-                    <Link className="float-right text-blue-700 m-5" to="/buses">View All</Link>
-                </Card>
-                <Card style="h-[550px] w-[500px] items-center p-2 ml-8">
-                    <h2 className="text-3xl font-bold ml-2 mt-2 mb-10">
-                       Students
-                    </h2>
-                    <div className="m-2 overflow-y-scroll">
-                        { student ? <StudentItem data={student}/> : <Loader />}
-                    </div>
-                    <Link className="float-right text-blue-700 m-5" to="/students">View All</Link>
-                </Card>
-                <Card style="h-[550px] w-[250px] items-center p-2 ml-10">
-                    <h2 className="text-3xl font-bold ml-2 mt-2 mb-10 ">
-                       Statistics
-                    </h2>
-                    <div className="m-2 flex flex-col space-y-20">
-                        <Counter 
-                            value="20"
-                            title="Online Now"
-                        />
-                        <Counter 
-                            value={student ? student.totalDocs * student.totalPages : 0}
-                            title="Students"
-                        />
-                        <Counter 
-                            value={bus ? bus.length : 0}
-                            title="Buses"
-                        />
-                    </div>
-                </Card>
+            {bus ? <LocationItem data={bus} /> : <Loader />}
+            <Link className="text-blue-700 mt-auto ml-auto mr-5" to="/buses">
+              View All
+            </Link>
+          </Card>
+          <Card style="h-[550px] w-[100%] md:w-[calc(50% - 4rem)] items-center p-2 mb-8 md:mb-0">
+            <h2 className="text-3xl font-bold ml-2 mt-2 mb-10">Students</h2>
+            <div className="overflow-y-scroll">
+              {student ? <StudentItem data={student} /> : <Loader />}
             </div>
-        </Base>
-    )
+            <Link className="text-blue-700 mt-auto ml-auto mr-5" to="/students">
+              View All
+            </Link>
+          </Card>
+          <Card style="h-[550px] w-[100%] md:w-[calc(33.33% - 6rem)] items-center p-2 mb-8 md:mb-0">
+            <h2 className="text-3xl font-bold ml-2 mt-2 mb-10 ">Statistics</h2>
+            <div className="m-2 flex flex-col space-y-20">
+              <Counter value="20" title="Online Now" />
+              <Counter
+                value={student ? student.totalDocs * student.totalPages : 0}
+                title="Students"
+              />
+              <Counter value={bus ? bus.length : 0} title="Buses" />
+            </div>
+          </Card>
+        </div>
+      </Base>
+    );
 }
 
 export default Dashboard

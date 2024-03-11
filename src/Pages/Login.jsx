@@ -54,7 +54,7 @@ const Login = () => {
                             onChange={(e) => setEmail(e.target.value)} 
                             type="email"
                             placeholder="Email"
-                            className="w-[300px] h-[45px] text-center text-xl shadow-xl hover:border-gray-200 hover:border-2 selection:box-border focus:outline-none" 
+                            className="w-full max-w-[300px] h-[45px] text-center text-xl shadow-xl hover:border-gray-200 hover:border-2 selection:box-border focus:outline-none" 
                         />
                     </div>
                     <div className="container m-2">
@@ -62,10 +62,10 @@ const Login = () => {
                             onChange={(e) => setPassword(e.target.value)} 
                             type="password"
                             placeholder="Password"
-                            className="w-[300px] h-[45px] text-center text-xl shadow-xl hover:border-gray-200 hover:border-2 focus:outline-none" 
+                            className="w-full max-w-[300px] h-[45px] text-center text-xl shadow-xl hover:border-gray-200 hover:border-2 focus:outline-none" 
                         />
                     </div>
-                    <button disabled={loading ? true : false} type="submit" className="btn w-[300px] h-[45px] bg-[#E9286D] text-center text-white text-xl uppercase m-2 hover:shadow-2xl flex justify-center items-center">
+                    <button disabled={loading ? true : false} type="submit" className="btn w-full max-w-[300px] h-[45px] bg-[#E9286D] text-center text-white text-xl uppercase m-2 hover:shadow-2xl flex justify-center items-center">
                         Login 
                         { !loading ? '' :
                             <ArrowPathIcon 
