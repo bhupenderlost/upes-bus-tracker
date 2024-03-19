@@ -6,8 +6,11 @@
     "@heroicons/react": "^2.1.1",
     "dotenv": "^16.4.5",
     "jwt-decode": "^4.0.0",
+    "leaflet-control-geocoder": "^2.4.0",
+    "leaflet-routing-machine": "^3.2.12",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-leaflet": "^4.2.1",
     "react-router-dom": "^6.22.2",
     "react-scripts": "5.0.1",
     "socket.io-client": "^4.7.4"
