@@ -42,18 +42,14 @@ const Add = () => {
         const latlng = e.latlng;
         map.latLngToLayerPoint(latlng);
         console.log(latlng);
-        // add latlng into array
         setPoints([...points, latlng]);
         console.log(points);
 
-        // Reverse geocoding to get location name locate
         const geocoder = L.Control.Geocoder.nominatim();
         geocoder.reverse(latlng, map.options.crs.scale(map.getZoom()), (results, status) => {
           console.log(results);
           const locationName = results[0].name;
-          // add location name into array
           setLocationNames([...locationNames, locationName]);
-          console.log(locationNames);
         });
       },
       locationfound(e) {
@@ -69,30 +65,14 @@ const Add = () => {
       </Marker>
     ) : null;
   };
-  //   useEffect(() => {
-  //     const map = L.map("map").setView([51.505, -0.09], 13);
-  //     map.on("click", handleMapClick);
-
-  //     return () => {
-  //       map.off("click", handleMapClick);
-  //     };
-  //   }, []); // Ensure this effect runs only once
-  // useEffect(() => {
-  //   const mapElement = document.getElementById("map");
-  //   if (!mapElement._leaflet_id) {
-  //     // Check if map is not initialized
-  //     const map = L.map(mapElement).setView([51.505, -0.09], 13);
-  //     map.on("click", handleMapClick);
-  //     return () => {
-  //       map.off("click", handleMapClick);
-  //     };
-  //   }
-  // }, []);
+ 
   useEffect(() => {
     if (params.has("id")) {
       getBusById(params.get("id"))
         .then((daa) => {
           setData(daa.dbRes);
+          setPoints(daa.dbRes.routeLatLng)
+          console.log(daa)
         })
         .catch((err) => console.log(err));
     }
@@ -105,29 +85,32 @@ const Add = () => {
       }
     }
   }, []);
+
   const formSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+    let formData = data
+    formData.routeLatLng = points
+    console.log(formData)
+    
     try {
       if (params.get("id")) {
-        const update = await updateBus(data, params.get("id"));
+        const update = await updateBus(formData, params.get("id"));
         if (update.success) {
           setData({});
           setLoading(false);
-          return navigate("/add-bus?success=update");
+          return navigate(`/add-bus?success=update&id=${params.get('id')}`);
         } else {
           setError(true);
           setLoading(false);
         }
       } else {
-        // let array = data.viaPassPoints.split(',')
-        // setData({ ...data, viaPassPoints: array })
-        const add = await addBus(data);
+      
+        const add = await addBus(formData);
         if (add.success) {
           setData({});
           setLoading(false);
-          return navigate("/add-bus?success=add");
+          return navigate(`/add-bus?success=add`);
         } else {
           setError(true);
           setLoading(false);
@@ -138,12 +121,7 @@ const Add = () => {
       setError(true);
     }
   };
-  useEffect(() => {
-    const passPointsInput = document.getElementById("passPoints");
-    if (passPointsInput) {
-      passPointsInput.value = points;
-    }
-  }, [points]);
+
   const handlePassPointsChange = (e) => {
     const inputPoints = e.target.value;
     if (inputPoints.trim() === "") {
@@ -170,7 +148,7 @@ const Add = () => {
 
   return (
     <Base>
-      <Card style="h-[100vh] w-[1600px] flex flex-col  p-2">
+      <Card style="h-[100vh] w-[1600px]  p-2">
         <h2 className="text-4xl font-bold ml-2 mt-2">
           {params.has("id") ? "Update Bus" : "Add Bus"}
         </h2>
@@ -195,6 +173,16 @@ const Add = () => {
                 id="route"
                 value={data.routeName ? data.routeName : ""}
                 placeholder="Eg- Route 2"
+                className="w-[600px] h-[45px] pl-2 border-l-4 border-red-500 text-xl shadow hover: selection:box-border focus:outline-none"
+              />
+            </div>
+            <div className="container m-2 flex flex-col">
+              <label className="font-semibold text-sm p-2">Driver Contact *</label>
+              <input
+                onChange={(e) => setData({ ...data, driverContact: e.target.value })}
+                type="text"
+                value={data.driverContact ? data.driverContact : ""}
+                placeholder="Eg- +911234567890"
                 className="w-[600px] h-[45px] pl-2 border-l-4 border-red-500 text-xl shadow hover: selection:box-border focus:outline-none"
               />
             </div>
@@ -242,9 +230,10 @@ const Add = () => {
               <input
                 id="passPoints"
                 type="text"
-                placeholder="Automatically populated based on map clicks"
+                value={data.viaPassPoints ? data.viaPassPoints : ""}
+                placeholder="Eg- Kandoli, Nanda Ki Chowki, FRI etc"
                 className="w-[600px] h-[45px] pl-2 border-l-4 border-red-500 text-xl shadow hover:selection:box-border focus:outline-none"
-                onChange={handlePassPointsChange}
+                onChange={(e) => setData({ ...data, viaPassPoints: e.target.value })}
               />
             </div>
             <div className="container m-2 flex flex-col">
@@ -284,10 +273,10 @@ const Add = () => {
           </form>
         </div>
         <MapContainer
-          center={[51.505, -0.09]}
+          center={[30.3165, 78.0322]}
           zoom={13}
           scrollWheelZoom={true}
-          className=" w-screen h-[50vh]"
+          className="w-2/2 h-[600px]"
         >
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           <LocationMarker />
