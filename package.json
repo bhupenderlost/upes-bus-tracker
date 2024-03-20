@@ -2,6 +2,7 @@
   "dependencies": {
     "axios": "^1.6.7",
     "cors": "^2.8.5",
+    "csvtojson": "^2.0.10",
     "dotenv": "^16.4.5",
     "express": "^4.18.3",
     "express-jwt": "^8.4.1",
@@ -19,7 +20,6 @@
     "start": "node app.js",
     "admin": "node admin.js",
     "client": "node client.js"
-
   },
   "author": "Bhupender Singh",
   "license": "ISC",

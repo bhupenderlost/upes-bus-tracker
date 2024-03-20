@@ -15,7 +15,7 @@ const studentRoutes = require('./routes/student')
 
 
 const { checkAuthorization } = require('./controllers/auth')
-const { getLocation } = require('./controllers/bus')
+const { getLocation, getLocationMany } = require('./controllers/bus')
 
 const PORT = process.env.PORT || 8000
 const DATABASE = process.env.DATABASE || ""
@@ -36,7 +36,7 @@ const app = express()
 const server = http.createServer(app)
 const io = new Server(server,  {
     cors: {
-        origin: ["http://localhost:4000", "http://localhost:3000", "http://192.168.1.5:3000"]
+        origin: ["http://localhost:4000", "http://localhost:3000", "http://192.168.1.5:3000", 'http://localhost:3001']
     }
 })
 
@@ -48,7 +48,7 @@ mongoose
     .catch(err => console.log(`Error Occured: ${JSON.stringify(err)}`))
 
 app.use(cors({
-    origin: ['http://localhost:4000', 'http://localhost:3000', 'http://192.168.1.5:3000'], 
+    origin: ['http://localhost:4000', 'http://localhost:3000', 'http://192.168.1.5:3000', 'http://localhost:3001'], 
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization'],
     credentials: true,
@@ -112,6 +112,15 @@ io.on("connection", (socket) => {
             .then((data) => {
                 io.to(busId).emit("locationsent", JSON.stringify(data))
             })
+            .catch(err => io.to(busId).emit("locationsent", JSON.stringify({ error: true })))
+    })
+    socket.on("all", (userId) => {
+        socket.join("buses")
+        socket.emit("joined", JSON.stringify({ connected: true }))
+    })
+    socket.on("all-location", () => {
+        getLocationMany()
+            .then(data => io.to("buses").emit("location-all", data))
             .catch(err => io.to(busId).emit("locationsent", JSON.stringify({ error: true })))
     })
 })

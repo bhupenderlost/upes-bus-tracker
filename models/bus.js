@@ -22,6 +22,7 @@ const busSchema = Schema({
     endPoint: {
         type: String
     },
+    routeLatLng: [],
     viaPassPoints: String,
     lastGpsInformation: {
         type: String

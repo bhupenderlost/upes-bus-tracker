@@ -3,7 +3,6 @@ const { getGpsData } = require('../utils/gps')
 
 exports.updateBus = async (req, res) => {
     try {
-        console.log(req.auth)
         if(req.auth.user.role !== "admin") {
             return res.status(401).json({
                 error: true,
@@ -75,6 +74,7 @@ exports.addBus = async (req, res) => {
             startPoint,
             viaPassPoints,
             endPoint,
+            routeLatLng
         } = req.body
 
         const busGPS = await getGpsData(apiKey)
@@ -85,6 +85,7 @@ exports.addBus = async (req, res) => {
             lastGpsInformation: JSON.stringify(busGPS.data.data[0]),
             startPoint: startPoint,
             endPoint: endPoint,
+            routeLatLng: routeLatLng,
             viaPassPoints: viaPassPoints
         })
 
@@ -105,8 +106,12 @@ exports.addBus = async (req, res) => {
 
 exports.getBusById = async (req, res) => {
     try {
+        let flag = true 
+        if(req.auth.user.role !== "admin") 
+            flag = false
+        
         const { busId } = req.params
-        const bus = await Bus.findOne({ _id: busId }).selecet('-apiKey')
+        const bus = await Bus.findOne({ _id: busId })
 
         res.json({
             success: true,
@@ -114,6 +119,7 @@ exports.getBusById = async (req, res) => {
         })
 
     }catch(err) {
+        console.log(err)
         res.status(400).json({
             error: true,
             message: err
@@ -141,10 +147,33 @@ exports.getLocation = async (busId) => {
     }
 }
 
+
+exports.getLocationMany = async () => {
+    try {
+        let currentLocations = []
+        const buses = await Bus.find()
+        for(let i = 0; i < buses.length; i++) {
+            let data = await getGpsData(buses[i].apiKey)
+            const updateBus = await Bus.findOneAndUpdate({ 
+                _id: buses[i]._id
+            }, { 
+                lastGpsInformation: JSON.stringify(data.data.data[0])
+            }, { 
+                new: true 
+            }).select('-apiKey')
+            currentLocations.push(JSON.stringify(updateBus))
+
+        }
+        return currentLocations
+    }catch(err) {
+        return err
+    }
+}
+
 exports.getBuses = async (req, res) => {
     try {
 
-        const bus = await Bus.find().sort({ updatedAt: 1 }).select('-apiKey')
+        const bus = await Bus.find().sort({ routeName: 1 }).select('-apiKey')
 
         res.json({
             success: true,
