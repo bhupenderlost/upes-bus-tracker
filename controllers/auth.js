@@ -84,6 +84,59 @@ exports.signIn = async (req, res) =>  {
     }
 }
 
+exports.changePassword = async (req, res) => {
+
+    try {
+
+        const { 
+            oldPassword,
+            newPassword
+        } = req.body
+
+        let user = await User.findOne({ _id: req.auth._id })
+
+        if(!user) {
+            return res.status(400).json({
+                error: error,
+                message: 'User Incorrect!'
+            })
+        }
+
+        if(encryptPassword(oldPassword, user.salt) !== user.encpy_password) {
+            return res.status(401).json({
+                error: true,
+                message: 'Old Password Incorrect!'
+            })
+        }
+
+        let salt = crypto.randomUUID()
+
+        let newencpassword = encryptPassword(newPassword, salt)
+
+        let updatePassword = await User.updateOne(
+                { 
+                    _id: req.auth._id 
+                },
+                {
+                    encpy_password: newencpassword, 
+                    salt: salt 
+                }
+            )
+
+        res.json({
+            success: true,
+            message: "Password Changed!",
+            dbRes: updatePassword
+        })
+
+    }catch(err) {
+        //On Error 
+        res.status(400).json({
+            error: true,
+            message: err
+        })
+    }
+}
 
 exports.signup = async (req, res) => {
 

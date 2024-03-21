@@ -2,13 +2,16 @@ const Bus = require('../models/bus')
 const { getGpsData } = require('../utils/gps')
 
 exports.updateBus = async (req, res) => {
+
     try {
-        if(req.auth.user.role !== "admin") {
+
+        if(req.auth.user.role !== "admin") 
             return res.status(401).json({
                 error: true,
                 message: "Permisison Denied!"
             })
-        }
+        
+
         const update = req.body
         const {
             busId
@@ -33,13 +36,15 @@ exports.updateBus = async (req, res) => {
 }
 
 exports.deleteBus = async (req, res) => {
+
     try {
-        if(req.auth.user.role !== "admin") {
+
+        if(req.auth.user.role !== "admin") 
             return res.status(401).json({
                 error: true,
                 message: "Permisison Denied!"
             })
-        }
+        
         const {
             busId
         } = req.params
@@ -60,12 +65,12 @@ exports.deleteBus = async (req, res) => {
 
 exports.addBus = async (req, res) => {
     try {
-        if(req.auth.user.role !== "admin") {
+        if(req.auth.user.role !== "admin") 
             return res.status(401).json({
                 error: true,
                 message: "Permisison Denied!"
             })
-        }
+        
         const {
             vehicleRegistration,
             apiKey,
