@@ -284,7 +284,7 @@ const Add = () => {
           </form>
         </div>
         <MapContainer
-          center={[51.505, -0.09]}
+          center={[30.4172075, 77.9675914]}
           zoom={13}
           scrollWheelZoom={true}
           className=" w-screen h-[50vh]"
