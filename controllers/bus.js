@@ -10,7 +10,6 @@ exports.updateBus = async (req, res) => {
             })
         }
         const update = req.body
-        console.log(update)
         const {
             busId
         } = req.params
