@@ -33,13 +33,14 @@ const Student = () => {
     return(
         <Base>
             <Card style="h-[80vh] w-[1600px] flex-col flex -ml-2 p-2">
+                { error ? <p>An Error Occurred!</p> : ''}
                 {data ? <StudentItem data={data} /> : <Loader />}
                 { !data ? '' :
                     <div className="flex flex-row justify-end">
-                        <button disabled={!data.hasPrevPage ? true : false} onClick={() => changePage(data.prevPage, 10)} className="btn w-[80px] h-[20px] bg-[#E9286D] text-center rounded text-white text-sm m-2">
+                        <button disabled={!data.hasPrevPage ? true : false} onClick={() => changePage(data.prevPage)} className="btn w-[80px] h-[20px] bg-[#E9286D] text-center rounded text-white text-sm m-2">
                             Previous
                         </button>
-                        <button disabled={!data.hasNextPage ? true : false} onClick={() => changePage(data.nextPage, 10)} className="btn w-[80px] h-[20px] bg-[#E9286D] text-center rounded text-white text-sm m-2">
+                        <button disabled={!data.hasNextPage ? true : false} onClick={() => changePage(data.nextPage)} className="btn w-[80px] h-[20px] bg-[#E9286D] text-center rounded text-white text-sm m-2">
                             Next
                         </button>
                     </div>

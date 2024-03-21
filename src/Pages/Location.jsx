@@ -12,7 +12,6 @@ import { Icon } from "leaflet";
 const Location = () => {
 
     const [data, setData] = useState(null)
-    const [location, setLocation] = useState(null)
     const [join, setJoin] = useState(false)
     const [params, setParams] = new useSearchParams()
     const [loading, setLoading] = useState(true)
@@ -35,47 +34,23 @@ const Location = () => {
             setJoin(true)
         })
 
-        // socket.emit('location', params.get('id'))
-        // let map, marker;
-        // socket.on('locationsent', (item) => {
-        //     let loc = JSON.parse(item)
-        //     setData(loc)
-        //     loc = JSON.parse(loc.lastGpsInformation)
-        //     window.localStorage.setItem('lat', loc.latitude)
-        //     window.localStorage.setItem('lng', loc.longitude)
-        //     setLocation(loc)
-        //     if(!marker) {
-        //         marker = new window.mappls.Marker({
-        //             map: map,
-        //             id: `marker`,
-        //             position: [localStorage.getItem('lat') ? localStorage.getItem('lat') : 30.3165, localStorage.getItem('lng') ? localStorage.getItem('lng') : 78.0322],
-        //             fitbounds: true,
-        //             html: `<div style="white-space:nowrap;font-size:10px;color:#000; background: #fff; width: 60px;">${loc.name}</div>`,
-        //             icon_url: 'https://apis.mapmyindia.com/map_v3/1.png'
-        //         })
-        //     }else {
-        //         marker.setPosition({ lat: loc.latitude, lng: loc.longitude})
-        //         marker.getPosition()
-                
-        //     }
-        // }) 
-         socket.emit("location", params.get("id"));
-         socket.on("locationsent", (item) => {
-           let loc = JSON.parse(item);
-           setData(loc);
-           loc = JSON.parse(loc.lastGpsInformation);
-           setLoading(false);
-           setPosition([loc.latitude, loc.longitude]);
-         });
+        socket.emit("location", params.get("id"))
+        socket.on("locationsent", (item) => {
+           let loc = JSON.parse(item)
+           setData(loc)
+           loc = JSON.parse(loc.lastGpsInformation)
+           setLoading(false)
+           setPosition([loc.latitude, loc.longitude])
+        })
 
          const interval = setInterval(() => {
-           socket.emit("location", params.get("id"));
-         }, 5000);
+           socket.emit("location", params.get("id"))
+         }, 5000)
 
          return () => {
-           socket.disconnect();
-           clearInterval(interval);
-         };
+           socket.disconnect()
+           clearInterval(interval)
+         }
     }, [])
     const myIcon = new Icon({
       iconUrl: "http://localhost:3000/bus-icon.png",
@@ -101,22 +76,22 @@ const Location = () => {
               {data ? data.vehicleRegistration : ""}
             </h2>
             <h2 className="text-lg border-l-4 border-red-500 pl-2">
-              <strong>Last Address:</strong> {location ? location.address : ""}
+              <strong>Last Address:</strong> {data ? JSON.parse(data.lastGpsInformation).address : ""}
             </h2>
             <h2 className="text-lg border-l-4 border-red-500 pl-2">
               <strong>Last GPS Time:</strong>{" "}
-              {location ? location.gpsTimeStr : ""}
+              {data ? JSON.parse(data.lastGpsInformation).gpsTimeStr : ""}
             </h2>
             <h2 className="text-lg border-l-4 border-red-500 pl-2">
               <strong>State Of Bus:</strong>{" "}
-              {location ? location.statusStr : ""}
+              {data ? JSON.parse(data.lastGpsInformation).statusStr : ""}
             </h2>
           </div>
           <p className="ml-5 text-blue-600">
             <Link to={`/add-bus?id=${data ? data._id : ""}`}>Edit Bus</Link>
           </p>
           <MapContainer
-            className="w-screen h-[50vh]"
+            className="w-2/2 h-[50vh]"
             center={position ? position : [0, 0]}
             zoom={13}
             scrollWheelZoom={true}
