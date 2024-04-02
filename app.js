@@ -36,7 +36,7 @@ const app = express()
 const server = http.createServer(app)
 const io = new Server(server,  {
     cors: {
-        origin: ["http://localhost:4000", "http://localhost:3000", "http://192.168.1.5:3000", 'http://localhost:3001']
+        origin: process.env.ORIGIN.split(',')
     }
 })
 
@@ -48,7 +48,7 @@ mongoose
     .catch(err => console.log(`Error Occured: ${JSON.stringify(err)}`))
 
 app.use(cors({
-    origin: ['http://localhost:4000', 'http://localhost:3000', 'http://192.168.1.5:3000', 'http://localhost:3001'], 
+    origin: process.env.ORIGIN.split(','), 
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization'],
     credentials: true,
@@ -56,7 +56,6 @@ app.use(cors({
     
 
 app.use(express.json())
-
 
 //SignIn/SignUp Routes
 app.use('/auth', authRoutes)

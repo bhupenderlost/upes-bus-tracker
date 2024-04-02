@@ -7,8 +7,12 @@ const app = express()
 
 app.use(express.static('public'))
 
-app.use('/',(req, res, next) => {
-    res.status(200).sendFile(path.join(__dirname, 'public', 'client', 'index.html'))
+app.use('/admin/*',(req, res, next) => {
+    res.status(200).sendFile(path.join(__dirname, 'public', 'admin', 'index.html'))
+})
+
+app.use('/app/*',(req, res, next) => {
+    res.status(200).sendFile(path.join(__dirname, 'public', 'admin', 'index.html'))
 })
 
 
