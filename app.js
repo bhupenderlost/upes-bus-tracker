@@ -83,9 +83,9 @@ app.use(cors({
 //Use The JSON Parser
 app.use(express.json())
 
-// app.get('/', (req, res) => {
-//     res.redirect('/app')
-// })
+app.get('/', (req, res) => {
+    res.redirect('/app')
+})
 
 // app.use('/admin*', express.static(
 //     path.join(
@@ -104,7 +104,7 @@ app.use(express.json())
 // ))
 
 //SignIn/SignUp Routes
-app.use('/api/v1/auth', authRoutes)
+app.use('/auth', authRoutes)
 
 //Middleware For JWT
 app.use(
@@ -144,8 +144,8 @@ app.use(async (req, res, next) => {
 /*
     All The Authenticated Routes 
 */
-app.use('/api/v1/bus', busRoutes) //Bus Routes ( Default Starts With /bus )
-app.use('/api/v1/student', studentRoutes) //Student Routes ( Default Starts With /student )
+app.use('/bus', busRoutes) //Bus Routes ( Default Starts With /bus )
+app.use('/student', studentRoutes) //Student Routes ( Default Starts With /student )
 
 
 

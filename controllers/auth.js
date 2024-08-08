@@ -73,10 +73,10 @@ exports.signIn = async (req, res) =>  {
         user.salt = undefined //undefine the salt
         user.encpy_password = undefined //undfine the encpy_password
         //generate cookie with name gps and value as jwtToken
-        res.cookie("gps", jwtToken, {
+        res.cookie("uttc__", jwtToken, {
             expire: time, //expire time
             path: "/", //path of the cookie
-            domain: "localhost", //domain of the site
+            domain: process.env.DOMAIN, //domain of the site
         })
         //Success
         res.json({
@@ -192,10 +192,10 @@ exports.signup = async (req, res) => {
         time.setTime(time.getTime() + 1800 * 1000)
         user.salt = undefined
         user.encpy_password = undefined
-        res.cookie("gps", jwtToken, {
+        res.cookie("uttc__", jwtToken, {
             expire: time,
             path: "/",
-            domain: "localhost",
+            domain: process.env.DOMAIN, //domain of the site
         })
         //Success
         res.json({
