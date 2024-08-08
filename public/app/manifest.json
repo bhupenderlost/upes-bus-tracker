@@ -1,7 +1,6 @@
 {
   "short_name": "UPES Bus",
   "name": "UPES Bus",
-  "homepage":"/app",
   "icons": [
     {
       "src": "favicon.ico",
