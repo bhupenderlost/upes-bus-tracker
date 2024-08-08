@@ -1,33 +1,36 @@
 const Bus = require('../models/bus')
 const { getGpsData } = require('../utils/gps')
 
+
+//Update Bus
 exports.updateBus = async (req, res) => {
-
+    //Try-Catch Block
     try {
-
+        //Check For Admin Role
         if(req.auth.user.role !== "admin") 
             return res.status(401).json({
                 error: true,
                 message: "Permisison Denied!"
             })
         
-
+        //Destructure REQ.BODY
         const update = req.body
         const {
             busId
-        } = req.params
+        } = req.params //Destructure Params
         const bus = await Bus.findOneAndUpdate(
-            { _id: busId },
-            update,
-            { new: true }
+            { _id: busId }, //Find The BUS BY ID
+            update, //WHAT TO UPDATE
+            { new: true } //GIVE NEW UPDATED RECORD
         )
+        //SUCCESS
         res.json({
             success: true,
             message: `Updated Bus ID: ${busId}`,
             dbRes: bus
         })
     }catch(err) {
-        console.log(err)
+        //ERROR
         res.status(400).json({
             error: true,
             message: err
@@ -153,6 +156,7 @@ exports.getLocation = async (busId) => {
 
 
 exports.getLocationMany = async () => {
+
     try {
         let currentLocations = []
         const buses = await Bus.find()
@@ -170,7 +174,7 @@ exports.getLocationMany = async () => {
         }
         return currentLocations
     }catch(err) {
-        return err
+        return { error: true }
     }
 }
 

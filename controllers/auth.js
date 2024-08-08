@@ -4,12 +4,15 @@ const fs = require('fs')
 const path = require('path')
 const crypto = require('crypto')
 
-const encryptPassword = (password, salt) => {
+//Encryptes Passwords 
+const encryptPassword = (password, salt) => { //Takse 2 arguments 1. password ( palin text ) 2. salt (any random words/buffer )
+    //returns the encrytped password encrypted using sha256
     return crypto
             .createHmac('sha256', salt)
             .update(password)
             .digest('hex')
 }
+
 //Private Key For JWT Signing
 const privateKey = fs
     .readFileSync(
@@ -26,18 +29,23 @@ const privateKey = fs
 exports.signIn = async (req, res) =>  {   
     //Try-Catch Block
     try {
+        //Destructure the email, password from body
         const { 
             email, 
             password 
         } = req.body
+        //finds the users in the db using email
         let user = await User.findOne({ email })
+        //if no user exists give error
         if(!user) {
             return res.status(400).json({
                 error: error,
                 message: 'User/Password Incorrect!'
             });
         }
-        if(encryptPassword(password, user.salt) !== user.encpy_password) {
+        //check for the password
+        if(encryptPassword(password, user.salt) !== user.encpy_password) { // calls the encyptPassword(password, user.salt)  
+            //if password is incorrect give error
             return res.status(401).json({
                 error: true,
                 message: 'User/Password Incorrect!'
@@ -60,14 +68,15 @@ exports.signIn = async (req, res) =>  {
                 expiresIn: user.userType === 'admin'? '1h' : '60d' //Expiry 
             }
         )
-        let time = new Date()
-        time.setTime(time.getTime() + 1800 * 1000)
-        user.salt = undefined
-        user.encpy_password = undefined
+        let time = new Date() //get current time
+        time.setTime(time.getTime() + 1800 * 1000) //change the time to unix
+        user.salt = undefined //undefine the salt
+        user.encpy_password = undefined //undfine the encpy_password
+        //generate cookie with name gps and value as jwtToken
         res.cookie("gps", jwtToken, {
-            expire: time,
-            path: "/",
-            domain: "localhost",
+            expire: time, //expire time
+            path: "/", //path of the cookie
+            domain: "localhost", //domain of the site
         })
         //Success
         res.json({
@@ -84,45 +93,48 @@ exports.signIn = async (req, res) =>  {
     }
 }
 
+//Change Password Function
 exports.changePassword = async (req, res) => {
 
     try {
-
+        //Destructure oldPassword, newPassword From req.body
         const { 
             oldPassword,
             newPassword
         } = req.body
-
+        //Find For The User
         let user = await User.findOne({ _id: req.auth._id })
-
+        //If No User Found
         if(!user) {
+            //Give Error
             return res.status(400).json({
                 error: error,
                 message: 'User Incorrect!'
             })
         }
-
+        //If Old Password is not correct
         if(encryptPassword(oldPassword, user.salt) !== user.encpy_password) {
+            //Return the error 
             return res.status(401).json({
                 error: true,
                 message: 'Old Password Incorrect!'
             })
         }
-
+        //Create A New Salt
         let salt = crypto.randomUUID()
-
+        //Create A New Encrpted Password
         let newencpassword = encryptPassword(newPassword, salt)
-
+        //Update The New Password And Salt
         let updatePassword = await User.updateOne(
                 { 
-                    _id: req.auth._id 
+                    _id: req.auth._id //Filter
                 },
                 {
-                    encpy_password: newencpassword, 
+                    encpy_password: newencpassword,  //Update
                     salt: salt 
                 }
             )
-
+        //Success Response 
         res.json({
             success: true,
             message: "Password Changed!",
@@ -137,7 +149,7 @@ exports.changePassword = async (req, res) => {
         })
     }
 }
-
+//User Signup 
 exports.signup = async (req, res) => {
 
      //Try-Catch Block
@@ -199,28 +211,25 @@ exports.signup = async (req, res) => {
         })
     }
 }
+
+//User Logout
 exports.loggout = async (req, res) => {
     try {
+        //Clear The Cookie 
         res.clearCookie('gps', { path: '/', domain: 'localhost', expires: new Date(1) })
+        //Give Success Status 
         res.status(200).json({
             logout: true,
             redirect: true
         })
     }catch(err) {
+        //If Error Give Error Response 
         res.status(400).json({
             error: true,
             message: err
         })
     }
    
-}
-
-//Verify Token
-exports.verifyToken = async (req, res) => {
-    res.json({
-        success: true,
-        message: "Token is valid!"
-    })
 }
 
 //Check Authorization Function
