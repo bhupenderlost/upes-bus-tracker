@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "@socket.io/cluster-adapter": "^0.2.2",
+    "@socket.io/sticky": "^1.0.4",
     "axios": "^1.6.7",
     "cors": "^2.8.5",
     "csvtojson": "^2.0.10",

@@ -20,7 +20,8 @@ const cors = require('cors')
 const { Server } = require('socket.io')
 const path = require('path')
 const fs = require('fs')
-
+const { createAdapter } = require("@socket.io/cluster-adapter")
+const { setupWorker } = require("@socket.io/sticky")
 /*  
     IMPORTS Routes
 
@@ -65,6 +66,10 @@ const io = new Server(server,  {
         origin:  process.env.ORIGIN.split(",") //CORS String FROM .ENV 
     }
 })
+
+io.adapter(createAdapter())
+
+setupWorker(io)
 //Database Connection
 mongoose
     .connect(DATABASE, {
@@ -84,9 +89,14 @@ app.use(cors({
 app.use(express.json())
 
 app.get('/', (req, res) => {
-    res.redirect('/app')
+    res.redirect('/app/')
 })
-
+app.get("/app/*", (req, res) => {
+    res.redirect('/app/')
+})
+app.get("/admin/*", (req, res) => {
+    res.redirect('/admin/')
+})
 // app.use('/admin*', express.static(
 //     path.join(
 //         __dirname, 
