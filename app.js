@@ -20,8 +20,8 @@ const cors = require('cors')
 const { Server } = require('socket.io')
 const path = require('path')
 const fs = require('fs')
-const { createAdapter } = require("@socket.io/cluster-adapter")
-const { setupWorker } = require("@socket.io/sticky")
+// const { createAdapter } = require("@socket.io/cluster-adapter")
+// const { setupWorker } = require("@socket.io/sticky")
 /*  
     IMPORTS Routes
 
@@ -67,9 +67,7 @@ const io = new Server(server,  {
     }
 })
 
-io.adapter(createAdapter())
 
-setupWorker(io)
 //Database Connection
 mongoose
     .connect(DATABASE, {
